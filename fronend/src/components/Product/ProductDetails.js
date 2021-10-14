@@ -2,20 +2,26 @@ import React, { Fragment, useEffect } from 'react';
 import Carousel from 'react-material-ui-carousel';
 import './ProductDetails.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { getProductDetails } from '../../actions/productAction';
+import { clearErrors, getProductDetails } from '../../actions/productAction';
 import ReactStars from 'react-rating-stars-component';
 import Loader from '../layout/Loader/Loader';
 import ReviewCard from './ReviewCard.js';
+import { useAlert } from 'react-alert';
 
 const ProductDetails = ({ match }) => {
+	const alert = useAlert();
 	const dispatch = useDispatch();
 	const { product, loading, error } = useSelector(
 		(state) => state.productDetails
 	);
 
 	useEffect(() => {
+		if (error) {
+			alert.error(error);
+			dispatch(clearErrors());
+		}
 		dispatch(getProductDetails(match.params.id));
-	}, [dispatch, match.params.id]);
+	}, [dispatch, match.params.id, alert, error]);
 
 	const options = {
 		edit: false,
@@ -64,7 +70,11 @@ const ProductDetails = ({ match }) => {
 								<div className='detailsBlock-3-1'>
 									<div className='detailsBlock-3-1-1'>
 										<button>-</button>
-										<input value='1' type='number' />
+										<input
+											value='1'
+											type='number'
+											onChange={() => console.log('Hello')}
+										/>
 										<button>+</button>
 									</div>
 									<button>Add to Cart</button>
@@ -86,8 +96,8 @@ const ProductDetails = ({ match }) => {
 					<h3 className='reviewsHeading'>REVIEWS</h3>
 					{product.reviews && product.reviews[0] ? (
 						<div className='reviews'>
-							{product.reviews.map((review) => (
-								<ReviewCard review={review} />
+							{product.reviews.map((review, i) => (
+								<ReviewCard key={i} review={review} />
 							))}
 						</div>
 					) : (
