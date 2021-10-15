@@ -4,17 +4,25 @@ const User = require('../models/userModel');
 const sendToken = require('../utils/jwtToken');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
+const cloudinary = require('cloudinary');
 
 // Register a user
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
 	const { name, email, password } = req.body;
+	// cloudinary
+	const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+		folder: 'avatars',
+		width: 150,
+		crop: 'scale',
+	});
+
 	const user = await User.create({
 		name,
 		email,
 		password,
 		avatar: {
-			public_id: 'sim[ple_public_id',
-			url: 'sim_ple_url',
+			public_id: myCloud.public_id,
+			url: myCloud.secure_url,
 		},
 	});
 
@@ -165,16 +173,33 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
 	sendToken(user, 200, res);
 });
 
-// Update User Profile
+// update User Profile
 exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
-	const updatedData = {
+	const newUserData = {
 		name: req.body.name,
 		email: req.body.email,
 	};
 
-	// we will add cloudinary later
+	if (req.body.avatar !== '') {
+		const user = await User.findById(req.user.id);
 
-	const user = await User.findByIdAndUpdate(req.user.id, updatedData, {
+		const imageId = user.avatar.public_id;
+
+		await cloudinary.v2.uploader.destroy(imageId);
+
+		const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+			folder: 'avatars',
+			width: 150,
+			crop: 'scale',
+		});
+
+		newUserData.avatar = {
+			public_id: myCloud.public_id,
+			url: myCloud.secure_url,
+		};
+	}
+
+	const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
 		new: true,
 		runValidators: true,
 		useFindAndModify: false,
@@ -182,6 +207,16 @@ exports.updateProfile = catchAsyncErrors(async (req, res, next) => {
 
 	res.status(200).json({
 		success: true,
+	});
+});
+
+// Get all users(admin)
+exports.getAllUser = catchAsyncErrors(async (req, res, next) => {
+	const users = await User.find();
+
+	res.status(200).json({
+		success: true,
+		users,
 	});
 });
 
