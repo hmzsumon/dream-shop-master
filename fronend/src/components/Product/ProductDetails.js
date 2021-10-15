@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import Carousel from 'react-material-ui-carousel';
 import './ProductDetails.css';
 import { useSelector, useDispatch } from 'react-redux';
@@ -8,13 +8,40 @@ import Loader from '../layout/Loader/Loader';
 import ReviewCard from './ReviewCard.js';
 import { useAlert } from 'react-alert';
 import MetaData from '../layout/MetaData';
+import { addItemsToCart } from '../../actions/cartAction';
 
 const ProductDetails = ({ match }) => {
 	const alert = useAlert();
 	const dispatch = useDispatch();
+
 	const { product, loading, error } = useSelector(
 		(state) => state.productDetails
 	);
+
+	const [quantity, setQuantity] = useState(1);
+	// const [open, setOpen] = useState(false);
+	// const [rating, setRating] = useState(0);
+	// const [comment, setComment] = useState('');
+
+	const increaseQuantity = () => {
+		if (product.stock <= quantity) return;
+
+		const qty = quantity + 1;
+		setQuantity(qty);
+	};
+
+	const decreaseQuantity = () => {
+		if (1 >= quantity) return;
+
+		const qty = quantity - 1;
+		setQuantity(qty);
+	};
+
+	// addToCart Handler
+	const addToCartHandler = () => {
+		dispatch(addItemsToCart(match.params.id, quantity));
+		alert.success('Item Added To Cart');
+	};
 
 	useEffect(() => {
 		if (error) {
@@ -71,18 +98,14 @@ const ProductDetails = ({ match }) => {
 								<h1>${product.price}</h1>
 								<div className='detailsBlock-3-1'>
 									<div className='detailsBlock-3-1-1'>
-										<button>-</button>
-										<input
-											value='1'
-											type='number'
-											onChange={() => console.log('Hello')}
-										/>
-										<button>+</button>
+										<button onClick={decreaseQuantity}>-</button>
+										<input readOnly type='number' value={quantity} />
+										<button onClick={increaseQuantity}>+</button>
 									</div>
-									<button>Add to Cart</button>
+									<button onClick={addToCartHandler}>Add to Cart</button>
 								</div>
 								<p>
-									Status{' '}
+									Status:
 									<b className={product.stock < 1 ? 'redColor' : 'greenColor'}>
 										{product.stock < 1 ? 'OutOfStock' : 'InStock'}
 									</b>

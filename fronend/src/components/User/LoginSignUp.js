@@ -1,11 +1,10 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Fragment, useRef, useState, useEffect } from 'react';
 import './LoginSignUp.css';
 import Loader from '../layout/Loader/Loader';
+import { Link } from 'react-router-dom';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import FaceIcon from '@material-ui/icons/Face';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { clearErrors, login, register } from '../../actions/userAction';
 import { useAlert } from 'react-alert';
@@ -36,14 +35,11 @@ const LoginSignUp = ({ history, location }) => {
 	const [avatar, setAvatar] = useState('/Profile.png');
 	const [avatarPreview, setAvatarPreview] = useState('/Profile.png');
 
-	//loginSubmit Handler
 	const loginSubmit = (e) => {
 		e.preventDefault();
 		dispatch(login(loginEmail, loginPassword));
-		console.log('Login From Submit');
 	};
 
-	//Register registerSubmit Handler
 	const registerSubmit = (e) => {
 		e.preventDefault();
 
@@ -56,7 +52,6 @@ const LoginSignUp = ({ history, location }) => {
 		dispatch(register(myForm));
 	};
 
-	//registerDataChange function
 	const registerDataChange = (e) => {
 		if (e.target.name === 'avatar') {
 			const reader = new FileReader();
@@ -70,9 +65,11 @@ const LoginSignUp = ({ history, location }) => {
 
 			reader.readAsDataURL(e.target.files[0]);
 		} else {
-			setUser({ ...user, [e.target.name]: [e.target.value] });
+			setUser({ ...user, [e.target.name]: e.target.value });
 		}
 	};
+
+	const redirect = location.search ? location.search.split('=')[1] : '/account';
 
 	useEffect(() => {
 		if (error) {
@@ -81,11 +78,10 @@ const LoginSignUp = ({ history, location }) => {
 		}
 
 		if (isAuthenticated) {
-			history.push('/account');
+			history.push(redirect);
 		}
-	}, [dispatch, error, alert, history, isAuthenticated]);
+	}, [dispatch, error, alert, history, isAuthenticated, redirect]);
 
-	// Login and Sign up form Handle by css
 	const switchTabs = (e, tab) => {
 		if (tab === 'login') {
 			switcherTab.current.classList.add('shiftToNeutral');
@@ -119,7 +115,6 @@ const LoginSignUp = ({ history, location }) => {
 								<button ref={switcherTab}></button>
 							</div>
 							<form className='loginForm' ref={loginTab} onSubmit={loginSubmit}>
-								{/* --LOGIN-- */}
 								<div className='loginEmail'>
 									<MailOutlineIcon />
 									<input
@@ -130,9 +125,6 @@ const LoginSignUp = ({ history, location }) => {
 										onChange={(e) => setLoginEmail(e.target.value)}
 									/>
 								</div>
-								{/* -- END LOGIN-- */}
-
-								{/* -- PASSWORD-- */}
 								<div className='loginPassword'>
 									<LockOpenIcon />
 									<input
@@ -143,11 +135,9 @@ const LoginSignUp = ({ history, location }) => {
 										onChange={(e) => setLoginPassword(e.target.value)}
 									/>
 								</div>
-								{/* --END PASSWORD-- */}
-								<Link to='/password/forgot'>Forget Password?</Link>
+								<Link to='/password/forgot'>Forget Password ?</Link>
 								<input type='submit' value='Login' className='loginBtn' />
 							</form>
-							{/* -- SIGN UP FORM-- */}
 							<form
 								className='signUpForm'
 								ref={registerTab}
@@ -199,7 +189,6 @@ const LoginSignUp = ({ history, location }) => {
 								</div>
 								<input type='submit' value='Register' className='signUpBtn' />
 							</form>
-							{/* --END SIGN UP FORM-- */}
 						</div>
 					</div>
 				</Fragment>

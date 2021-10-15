@@ -4,11 +4,11 @@ import Loader from '../layout/Loader/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearErrors, updatePassword } from '../../actions/userAction';
 import { useAlert } from 'react-alert';
-import { UPDATE_PASSWORD_RESET } from '../../constants/userConstants';
 import MetaData from '../layout/MetaData';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import LockIcon from '@material-ui/icons/Lock';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
+import { UPDATE_PASSWORD_RESET } from '../../constants/userConstants';
 
 const UpdatePassword = ({ history }) => {
 	const dispatch = useDispatch();
