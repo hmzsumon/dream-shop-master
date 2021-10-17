@@ -125,6 +125,7 @@ const Payment = ({ history }) => {
 						<CreditCardIcon />
 						<CardNumberElement className='paymentInput' />
 					</div>
+
 					<div>
 						<EventIcon />
 						<CardExpiryElement className='paymentInput' />
@@ -136,11 +137,15 @@ const Payment = ({ history }) => {
 
 					<input
 						type='submit'
-						value={`Pay - ₹${orderInfo && orderInfo.totalPrice}`}
+						value={`Pay - $${orderInfo && orderInfo.totalPrice}`}
 						ref={payBtn}
 						className='paymentFormBtn'
 					/>
 				</form>
+				Test Card No:
+				<small style={{ margin: '0', color: 'tomato' }}>
+					4000 0027 6000 3184
+				</small>
 			</div>
 		</Fragment>
 	);

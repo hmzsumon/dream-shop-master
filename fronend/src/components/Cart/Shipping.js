@@ -11,7 +11,7 @@ import PhoneIcon from '@material-ui/icons/Phone';
 import TransferWithinAStationIcon from '@material-ui/icons/TransferWithinAStation';
 import { Country, State } from 'country-state-city';
 import { useAlert } from 'react-alert';
-import CheckoutSteps from '../Cart/CheckoutSteps.js';
+import CheckoutSteps from '../Cart/CheckoutSteps';
 
 const Shipping = ({ history }) => {
 	const dispatch = useDispatch();
@@ -28,7 +28,7 @@ const Shipping = ({ history }) => {
 	const shippingSubmit = (e) => {
 		e.preventDefault();
 
-		if (phoneNo.length < 11 || phoneNo.length > 11) {
+		if (phoneNo.length < 10 || phoneNo.length > 10) {
 			alert.error('Phone Number should be 10 digits Long');
 			return;
 		}
